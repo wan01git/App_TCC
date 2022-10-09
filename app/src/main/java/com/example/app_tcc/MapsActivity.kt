@@ -1,14 +1,20 @@
 package com.example.app_tcc
 
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Message
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -22,8 +28,10 @@ import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlin.random.Random
 
 const val getCoordenada = 111
+const val geofenceRequerida = 12345567
 const val getGeofencing = 222
 const val zoomCamera = 10f
 const val raioGeofencing = 500
@@ -101,10 +109,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        click_longo(mMap)
     }
 
     private fun localizacaoConcedida(): Boolean{
@@ -128,7 +133,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             )
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoomCamera))
             val database = Firebase.database
-            val referencia = database.getReference("dados")
+            val referencia = database.getReference("Dados")
             val key =  referencia.push().key
             if (key != null){
                 val lembrete = lembrete(key, latlng.latitude, latlng.longitude)
@@ -160,5 +165,87 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             geofenceIntencao,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            if (ContextCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            )!= PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                    geofenceRequerida
+                )
+            } else{
+                geofencingClient.addGeofences(geofenceRequisicao, intecaoPendente)
+            }
+        }else{
+            geofencingClient.addGeofences(geofenceRequisicao, intecaoPendente)
+        }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == geofenceRequerida){
+            if (permissions.isNotEmpty() && grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(
+                    this,
+                    "O aplicativo para seu funcionamento correto, necessita da permissão de acesso à localização!",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+        if(requestCode == getCoordenada){
+            if(grantResults.isNotEmpty()&& (grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[1] == PackageManager.PERMISSION_GRANTED)){
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    return
+                }
+                mMap.isMyLocationEnabled = true
+                onMapReady(mMap)
+            }
+            else{
+                Toast.makeText(
+                    this,
+                    "O aplicativo para seu funcionamento correto, necessita da permissão de acesso à localização!",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+    }
+     companion object {
+        fun showNotification(context: Context, mensagem: String){
+            val canal_id = "canal de notificação dos dados"
+            var notificationId =  6669
+            notificationId += Random(notificationId).nextInt(1,100)
+            val notificationBuild = NotificationCompat.Builder(context.applicationContext, canal_id)
+                .setSmallIcon(R.drawable.ic_notifications_24)
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(mensagem)
+                .setStyle(
+                    NotificationCompat.BigTextStyle().bigText(mensagem)
+                )
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            val NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as  NotificationManager
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                val canal = NotificationChannel(
+                    canal_id,
+                    context.getString(R.string.app_name),
+                    android.app.NotificationManager.IMPORTANCE_DEFAULT
+                ).apply { description = context.getString(R.string.app_name) }
+                NotificationManager.createNotificationChannel(canal)
+                }
+            NotificationManager.notify(notificationId,notificationBuild.build())
+            }
+    }
+
 }
