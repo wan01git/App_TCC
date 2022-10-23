@@ -50,6 +50,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -133,7 +134,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             )
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoomCamera))
             val database = Firebase.database
-            val referencia = database.getReference("Dados")
+            val referencia = database.getReference("Geofences")
             val key =  referencia.push().key
             if (key != null){
                 val lembrete = lembrete(key, latlng.latitude, latlng.longitude)
