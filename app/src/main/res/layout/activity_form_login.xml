@@ -4,6 +4,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_tcc"
     tools:context=".FormLogin">
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/tcc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+    <View
+        android:id="@+id/container"
+        style="@style/containerComponent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEnFOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/back"
+        />
+    <EditText
+        android:id="@+id/edit_email"
+        style="@style/edit_text"
+        android:hint="E-mail"
+        android:inputType="textEmailAddress"
+        android:drawableRight="@drawable/ic_baseline_email_24"
+        app:layout_constraintStart_toStartOf="@id/container"
+        app:layout_constraintEnd_toEndOf="@id/container"
+        app:layout_constraintTop_toTopOf="@id/container"
+        />
+    <EditText
+        android:id="@+id/edit_senha"
+        style="@style/edit_text"
+        android:hint="Senha"
+        android:drawableRight="@drawable/ic_baseline_remove_red_eye_24"
+        android:inputType="numberPassword"
+        app:layout_constraintStart_toStartOf="@id/container"
+        app:layout_constraintEnd_toEndOf="@id/container"
+        app:layout_constraintTop_toBottomOf="@id/edit_email"
+        />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_entrar"
+        style="@style/button"
+        android:text="Entrar"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toStartOf="@id/container"
+        app:layout_constraintEnd_toEndOf="@id/container"
+        app:layout_constraintTop_toBottomOf="@id/edit_senha"
+        />
+
+    <TextView
+        android:id="@+id/text_cadastro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Crie uma conta clicando aqui!"
+        android:textColor="@color/black"
+        android:textSize="19dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/container" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -128,8 +128,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             map.addCircle(
                 CircleOptions()
                     .center(latlng)
-                    .strokeColor(Color.rgb(216,237,238))
-                    .fillColor(Color.rgb(0,250,154))
+                    .strokeColor(Color.rgb(206,207,208))
+                    .fillColor(Color.rgb(0,150,154))
                     .radius(raioGeofencing.toDouble())
             )
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoomCamera))
