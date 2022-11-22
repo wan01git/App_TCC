@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -24,8 +25,9 @@ class GeofenceReceptor: BroadcastReceiver() {
                 if (p1 != null){
                     key = p1.getStringExtra("key")!!
                     mensagem = p1.getStringExtra("mensagem")!!
+                    var user = FirebaseAuth.getInstance().currentUser!!.uid
                     val firebase = Firebase.database
-                    val reference = firebase.getReference("Dados")
+                    val reference = firebase.getReference(user)
                     val receptorLister = object: ValueEventListener{
                         override fun onDataChange(snapshot: DataSnapshot) {
                             val lembrete = snapshot.getValue<lembrete>()

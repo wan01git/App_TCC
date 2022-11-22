@@ -9,23 +9,23 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Message
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-
+import com.example.app_tcc.databinding.ActivityMapsBinding
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.example.app_tcc.databinding.ActivityMapsBinding
-import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlin.random.Random
@@ -46,6 +46,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
     private lateinit var localizacaoFundida: FusedLocationProviderClient
     private lateinit var geofence: GeofencingClient
+    private lateinit var snackbar: Snackbar
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,20 +130,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             map.addCircle(
                 CircleOptions()
                     .center(latlng)
-                    .strokeColor(Color.rgb(206,207,208))
-                    .fillColor(Color.rgb(0,150,154))
+                    .strokeColor(Color.argb(50,8,35,13))
+                    .fillColor(Color.argb(70,139,192,137))
                     .radius(raioGeofencing.toDouble())
             )
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoomCamera))
+            var user = FirebaseAuth.getInstance().currentUser!!.uid
             val database = Firebase.database
-            val referencia = database.getReference("Geofences")
+            val referencia = database.getReference(user)
             val key =  referencia.push().key
             if (key != null){
                 val lembrete = lembrete(key, latlng.latitude, latlng.longitude)
-                referencia.child(key).setValue(lembrete)
+                referencia.child("Geofence").setValue(lembrete)
             }
             criarGeofencing(latlng, key!!,geofence)
         }
+
+
     }
 
     private fun criarGeofencing(location: LatLng, key: String, geofencingClient: GeofencingClient){
@@ -159,7 +164,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val geofenceIntencao = Intent(this,GeofenceReceptor::class.java)
             .putExtra("key",key)
-            .putExtra("mensagem","Geofence criada com sucesso")
+            .putExtra("mensagem","Geofence detectada!!")
         val intecaoPendente = PendingIntent.getBroadcast(
             applicationContext,
             0,
@@ -182,6 +187,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }else{
             geofencingClient.addGeofences(geofenceRequisicao, intecaoPendente)
         }
+        var intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onRequestPermissionsResult(
