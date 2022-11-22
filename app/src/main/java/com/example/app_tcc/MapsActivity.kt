@@ -9,23 +9,22 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Message
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-
+import com.example.app_tcc.databinding.ActivityMapsBinding
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.example.app_tcc.databinding.ActivityMapsBinding
-import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.CircleOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlin.random.Random
@@ -133,12 +132,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     .radius(raioGeofencing.toDouble())
             )
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoomCamera))
+            var user = FirebaseAuth.getInstance().currentUser!!.uid
             val database = Firebase.database
-            val referencia = database.getReference("Geofences")
+            val referencia = database.getReference(user)
             val key =  referencia.push().key
             if (key != null){
                 val lembrete = lembrete(key, latlng.latitude, latlng.longitude)
-                referencia.child(key).setValue(lembrete)
+                referencia.child("Geofence").setValue(lembrete)
             }
             criarGeofencing(latlng, key!!,geofence)
         }

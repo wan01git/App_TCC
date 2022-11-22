@@ -4,6 +4,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_tcc"
     tools:context=".formCadastrar">
+
+    <TextView
+        android:id="@+id/text_cadastre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cadastre-se"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="80dp"
+        />
+
+    <View
+        android:id="@+id/container_cadastro"
+        style="@style/containerComponent"
+        app:layout_constraintTop_toBottomOf="@id/text_cadastre"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+    <EditText
+        android:id="@+id/edit_nome"
+        style="@style/edit_text"
+        android:hint="nome"
+        android:inputType="textEmailAddress"
+        android:drawableRight="@drawable/ic_nome"
+        app:layout_constraintStart_toStartOf="@id/container_cadastro"
+        app:layout_constraintEnd_toEndOf="@id/container_cadastro"
+        app:layout_constraintTop_toTopOf="@id/container_cadastro"
+        />
+    <EditText
+        android:id="@+id/edit_email"
+        style="@style/edit_text"
+        android:hint="E-mail"
+        android:inputType="textEmailAddress"
+        android:drawableRight="@drawable/ic_baseline_email_24"
+        app:layout_constraintStart_toStartOf="@id/container_cadastro"
+        app:layout_constraintEnd_toEndOf="@id/container_cadastro"
+        app:layout_constraintTop_toBottomOf="@id/edit_nome"
+        />
+    <EditText
+        android:id="@+id/edit_senha"
+        style="@style/edit_text"
+        android:hint="Senha"
+        android:drawableRight="@drawable/ic_baseline_remove_red_eye_24"
+        android:inputType="numberPassword"
+        app:layout_constraintStart_toStartOf="@id/container_cadastro"
+        app:layout_constraintEnd_toEndOf="@id/container_cadastro"
+        app:layout_constraintTop_toBottomOf="@id/edit_email"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/bt_cadastrar"
+        style="@style/button"
+        android:textSize="18dp"
+        android:text="Cadastrar"
+        android:textAllCaps="false"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toStartOf="@id/container_cadastro"
+        app:layout_constraintEnd_toEndOf="@id/container_cadastro"
+        app:layout_constraintTop_toBottomOf="@id/container_cadastro"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
