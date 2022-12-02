@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         deslogar= findViewById(R.id.bt_deslogar)
 
         deslogar.setOnClickListener(View.OnClickListener {
-
         })
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
