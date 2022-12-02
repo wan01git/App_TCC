@@ -36,6 +36,50 @@ class   FormLogin : AppCompatActivity() {
 
         texto.setOnClickListener {
             var intent = Intent(this, formCadastrar::class.java)
+
+            startActivity(intent)
+        }
+        bt_entrar.setOnClickListener(View.OnClickListener {
+            var email  = edit_email.text.toString();
+            var senha  = edit_senha.text.toString();
+            if (email.isEmpty() || senha.isEmpty()){
+                snackbar = Snackbar.make(it,"Preencha todos campos", Snackbar.LENGTH_LONG);
+                snackbar.setBackgroundTint(Color.WHITE)
+                snackbar.setTextColor(Color.BLACK)
+                snackbar.show()
+            }
+            else{
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(email,senha).addOnCompleteListener(
+                    OnCompleteListener {
+                        task ->
+                        if (task.isSuccessful){
+                            var intent = Intent(this, MainActivity::class.java)
+                            startActivity(intent)
+                        }else{
+                            try {
+                                throw task.exception!!
+                            }
+                            catch (e:Exception){
+                                snackbar = Snackbar.make(it,"Erro ao realizar login!",Snackbar.LENGTH_LONG);
+                                snackbar.setBackgroundTint(Color.WHITE)
+                                snackbar.setTextColor(Color.BLACK)
+                                snackbar.show()
+                            }
+                        }
+                    })
+            }
+        })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        user = FirebaseAuth.getInstance().currentUser!!
+        if (user != null){
+            var intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+        else{
+            var intent = Intent(this, FormLogin::class.java)
             startActivity(intent)
         }
         bt_entrar.setOnClickListener(View.OnClickListener {

@@ -24,7 +24,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -46,8 +45,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
     private lateinit var localizacaoFundida: FusedLocationProviderClient
     private lateinit var geofence: GeofencingClient
-    private lateinit var snackbar: Snackbar
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,8 +127,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             map.addCircle(
                 CircleOptions()
                     .center(latlng)
-                    .strokeColor(Color.argb(50,8,35,13))
-                    .fillColor(Color.argb(70,139,192,137))
+                    .strokeColor(Color.rgb(206,207,208))
+                    .fillColor(Color.rgb(0,150,154))
                     .radius(raioGeofencing.toDouble())
             )
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoomCamera))
@@ -145,8 +142,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             criarGeofencing(latlng, key!!,geofence)
         }
-
-
     }
 
     private fun criarGeofencing(location: LatLng, key: String, geofencingClient: GeofencingClient){
@@ -164,7 +159,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val geofenceIntencao = Intent(this,GeofenceReceptor::class.java)
             .putExtra("key",key)
-            .putExtra("mensagem","Geofence detectada!!")
+            .putExtra("mensagem","Geofence criada com sucesso")
         val intecaoPendente = PendingIntent.getBroadcast(
             applicationContext,
             0,
@@ -187,8 +182,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }else{
             geofencingClient.addGeofences(geofenceRequisicao, intecaoPendente)
         }
-        var intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
     }
 
     override fun onRequestPermissionsResult(
